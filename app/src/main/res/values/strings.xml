@@ -7,14 +7,14 @@
     <string name="title_activity_selected_device">SelectedDeviceActivity</string>
 
     <string name="label_state">State:</string>
-    <string name="label_data">Data:</string>
+    <string name="label_data">Received Data:</string>
     <string name="label_led">LED:</string>
     <string name="label_button">Button:</string>
 
     <string name="disconnected">Disconnected</string>
     <string name="connected">Connected</string>
-    <string name="read">Read</string>
-    <string name="write">Write</string>
+    <string name="read">COLLECT</string>
+    <string name="write">EDIT</string>
     <string name="pressed">Pressed</string>
     <string name="menu_connect">CONNECT</string>
     <string name="menu_disconnect">DISCONNECT</string>

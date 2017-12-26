@@ -21,5 +21,15 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_selected_device" />
+    <include layout="@layout/content_selected_device"
+        android:id="@+id/include" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="230dp"
+        android:layout_marginTop="420dp"
+        app:srcCompat="@drawable/tumlogo" />
+
 </android.support.design.widget.CoordinatorLayout>

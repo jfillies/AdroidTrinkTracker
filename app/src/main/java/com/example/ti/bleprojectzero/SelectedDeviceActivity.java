@@ -56,17 +56,29 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.lang.Object;
+import java.util.concurrent.TimeUnit;
+
+import android.view.inputmethod.InputConnection;
+
+import static android.view.inputmethod.InputConnection.CURSOR_UPDATE_IMMEDIATE;
 
 public class SelectedDeviceActivity extends AppCompatActivity {
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
 
-    private TextView mConnectionState;
+    public TextView mConnectionState;
     private EditText mDataField;
     private String mDeviceName;
     private MainActivity mMainActivity;
     private HashMap<String, BluetoothGattCharacteristic> mGattCharacteristics = new HashMap<>();
 
+    private String [] stat = new String[11];
+    //private String [] stat2 =new String[] {"a","b","c","d","e","f","7","8"};
+    public int counter =0;
+    public int counteri =10;
+    public int test=0;
+    //public int counter2 = 7;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,13 +100,18 @@ public class SelectedDeviceActivity extends AppCompatActivity {
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (EditText) findViewById(R.id.data_value);
 
+
         // Get instance of main activity
         mMainActivity = (MainActivity) MainActivity.activity;
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+      //  setContentView(R.layout.activity_selected_device);
+
         // Register a receiver for broadcast updates
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
     }
@@ -138,14 +155,17 @@ public class SelectedDeviceActivity extends AppCompatActivity {
                     updateConnectionState(R.string.connected);
                     invalidateOptionsMenu();
                     break;
+
                 case MainActivity.ACTION_GATT_DISCONNECTED:
                     updateConnectionState(R.string.disconnected);
                     invalidateOptionsMenu();
                     clearUI();
                     break;
+
                 case MainActivity.ACTION_GATT_SERVICES_DISCOVERED:
                     initializeGattServiceUIElements(mMainActivity.getSupportedGattServices());
                     break;
+
                 case MainActivity.ACTION_DATA_AVAILABLE:
                     // If the a toggle button ID is sent as extra data, call a function to display the button state.
                     // Otherwise, display the extra data in the data service text field
@@ -163,6 +183,7 @@ public class SelectedDeviceActivity extends AppCompatActivity {
                     }
                     else {
                         displayData(intent.getStringExtra(MainActivity.EXTRA_DATA));
+
                     }
                     break;
                 case MainActivity.ACTION_WRITE_SUCCESS:
@@ -181,6 +202,8 @@ public class SelectedDeviceActivity extends AppCompatActivity {
             @Override
             public void run() {
                 mConnectionState.setText(resourceId);
+                invalidateOptionsMenu();
+
             }
         });
     }
@@ -190,10 +213,41 @@ public class SelectedDeviceActivity extends AppCompatActivity {
      *
      * @param text   The text to display
      */
+
     private void displayData(String text) {
-        if (text != null) {
-            mDataField.setText(text);
+        test++;
+        //System.out.println(test);
+        stat[counter]=text;
+
+        System.out.println(counter);
+        System.out.println(stat[counter]);
+        if (counter <= 9){
+            counter++;
         }
+        if (/*text != null &&*/ counter ==10) {
+            SelectedDeviceActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    while (counteri >=0) {
+                        //mDataField.setText(stat2[counter2-i]);
+                        try {
+                            // System.out.println(stat2[counter2-i]);
+                            mDataField.append(stat[counter - counteri] + ", ");
+                            //mDataField.append("\n");
+                            // mDataField.invalidate();
+                            //mDataField.postInvalidate();
+                            //invalidateOptionsMenu();
+                            //Thread.sleep(1000);
+                           // System.out.println(counteri);
+                            counteri--;
+                        } catch (Exception e) {
+
+                        }
+                    }
+
+                }
+            });
+        }
+
     }
 
     /**
@@ -354,6 +408,66 @@ public class SelectedDeviceActivity extends AppCompatActivity {
      * Called when the user clicks the read button for data service
      */
     public void onDataRead(View view) {
+    for(int i =0; i<5; i++) {
+        //mDataField.setText("hi5");
+        /*SelectedDeviceActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+            //    mDataField.setText("hi6");
+                mDataField.invalidate();
+                mDataField.postInvalidate();
+                invalidateOptionsMenu();
+            }
+        });*/
+        try {
+            Thread.sleep(15000);
+           // displayData(intent.getStringExtra(MainActivity.EXTRA_DATA));
+           // System.out.println("HI2");
+        }catch (Exception e) {
+            //System.out.println("HI2");
+        }
+        //mDataField.setText("hi7");
+       /* mConnectionState.setText("hi36");
+        /*SelectedDeviceActivity.this.runOnUiThread(new Runnable() {
+                          public void run() {
+                              mDataField.invalidate();
+                              mDataField.postInvalidate();
+                              invalidateOptionsMenu();
+                          }
+                      });*/
+       /* SelectedDeviceActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                mConnectionState.invalidate();
+                mConnectionState.postInvalidate();
+            }
+        });*/
+        //new Thread(new Runnable() {
+        //public void run(){
+                helper2();
+
+               // mDataField.invalidate();
+       // invalidateOptionsMenu();
+
+          // }
+        //}).start();
+
+        //mDataField.setText("hi8");
+        /*SelectedDeviceActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                mConnectionState.invalidate();
+                mConnectionState.postInvalidate();
+            }
+        });*/
+       // getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
+        //Thread.yield();
+        //requestCursorUpdates(CURSOR_UPDATE_IMMEDIATE);
+        //setContentView(R.layout.activity_selected_device);
+
+    }
+
+    }
+
+
+    public void helper2(){
         if (mGattCharacteristics != null) {
             // Get characteristic for R/W string
             final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get("String char");
@@ -362,16 +476,42 @@ public class SelectedDeviceActivity extends AppCompatActivity {
             }
             // Read it if readable
             final int charaProp = characteristic.getProperties();
+
             if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-                mMainActivity.readCharacteristic(characteristic);
+               // for (int i=0; i<3;i++) {
+                //mDataField.invalidate();
+
+                    mMainActivity.readCharacteristic(characteristic);
+
+                    // mDataField.invalidate();
+               /*     mConnectionState.invalidate();
+                    mConnectionState.postInvalidate();
+                    try {
+                        Thread.sleep(3000);
+                        System.out.println("HI3");
+                    } catch (Exception e) {
+
+                    }
+                }*/
             }
+
         }
+       /* try {
+            Thread.sleep(5000);
+            System.out.println("HI");
+        }catch (Exception e) {
+            System.out.println("HI2");
+        }
+        System.out.println("HI3");
+        //test2();
+        */
     }
 
     /**
      * Called when the user clicks the write button for data service
      */
     public void onDataWrite(View view) {
+
         if (mGattCharacteristics != null) {
             // Get characteristic for R/W string
             final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get("String char");
@@ -390,5 +530,6 @@ public class SelectedDeviceActivity extends AppCompatActivity {
                 mMainActivity.writeCharacteristic(characteristic);
             }
         }
+
     }
 }

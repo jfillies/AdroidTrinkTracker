@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             // Bluetooth is not available or disabled. Display
             // a dialog requesting user permission to enable Bluetooth.
@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
             mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
             scanLeDevice(true);
         }
+
     }
 
     @Override
@@ -313,6 +314,7 @@ public class MainActivity extends AppCompatActivity {
         // If there is only 1 item in the queue, then read it. If more than 1, it is handled
         // asynchronously in the callback
         if((characteristicQueue.size() == 1)) {
+          // broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             mBluetoothGatt.readCharacteristic(characteristic);
         }
     }
@@ -330,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
-
+      //  broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
         mBluetoothGatt.writeCharacteristic(characteristic);
     }
 
@@ -442,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Read action has finished, remove from queue
             characteristicQueue.remove();
-
+            broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             // Broadcast the results
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
@@ -575,6 +577,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // start activity
                     startActivity(intent);
+
                 }
             });
 
@@ -628,6 +631,7 @@ public class MainActivity extends AppCompatActivity {
         else {
             // Write the data formatted as a string
             final byte[] data = characteristic.getValue();
+
             if (data != null && data.length > 0) {
                 intent.putExtra(EXTRA_DATA, new String(data));
             }
